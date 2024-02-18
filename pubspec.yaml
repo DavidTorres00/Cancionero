@@ -12,7 +12,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   sqflite: ^2.3.0
   path: ^1.8.3
-
+  syncfusion_flutter_pdfviewer: ^24.2.6
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -22,3 +23,24 @@ flutter:
   uses-material-design: true
   assets:
     - images/
+    - cantosDoc/
+    - cantosDoc/Adoracion/
+    - cantosDoc/Adviento/
+    - cantosDoc/Agradecimiento/
+    - cantosDoc/Alabanza/
+    - cantosDoc/Aleluya/
+    - cantosDoc/Bautismo/
+    - cantosDoc/Boda/
+    - cantosDoc/Comunion/
+    - cantosDoc/Cordero/
+    - cantosDoc/Curesma/
+    - cantosDoc/Difunto/
+    - cantosDoc/Entrada/
+    - cantosDoc/Espiritu/
+    - cantosDoc/Navidad/
+    - cantosDoc/Ofertorio/
+    - cantosDoc/Pascua/
+    - cantosDoc/Reflexion/
+    - cantosDoc/Salida/
+    - cantosDoc/Santo/
+    - cantosDoc/Villancico/

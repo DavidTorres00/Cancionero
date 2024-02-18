@@ -9,14 +9,24 @@
 //**************************************************
 
 class Canto {
-  final int id;
+  final int? id;
   final String nombre;
   final String categoria;
   final String rutaArchivo;
 
   Canto(
-      {required this.id,
+      {this.id,
       required this.nombre,
       required this.categoria,
       required this.rutaArchivo});
+
+  //Método para convertir un objeto Canto en un mapa
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nombre': nombre,
+      'categoria': categoria,
+      'rutaArchivo': rutaArchivo,
+    };
+  }
 }

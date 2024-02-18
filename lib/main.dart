@@ -8,15 +8,59 @@
 //                                                 *
 //**************************************************
 
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
-import 'package:ruah/pantallas/pagina_lista_cantos.dart';
+import 'package:path/path.dart' as path;
+import 'package:sqflite/sqflite.dart';
+import 'modelos/modelos.dart';
+import 'pantallas/pantallas.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  //Asegurar la inicialización de los enlaces de Flutter
+  WidgetsFlutterBinding.ensureInitialized();
+
+  //Abrir la base de datos
+  final db = await BaseDatos.initDatabase();
+
+  //Cargar los cantos de agradecimiento a la base de datos
+  //await cargarCantosAgradecimiento(db);
+
+  print('Base de datos inicializada correctamente');
+
+  runApp(MyApp(db: db));
+}
+
+Future<void> cargarCantosAgradecimiento(Database? db) async {
+  try {
+    String assetsPath = 'cantosDoc/Agradecimiento';
+    final manifestContent = await rootBundle.loadString('AssetManifest.json');
+    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+    final fileList =
+        manifestMap.keys.where((key) => key.startsWith(assetsPath)).toList();
+
+    //Iterar sobre los archivos y agregarlos a la base de datos
+    for (var file in fileList) {
+      var nombreArchivo = path.basenameWithoutExtension(file);
+      var categoria = 'agradecimiento';
+      var rutaArchivo = file;
+      var canto = Canto(
+        nombre: nombreArchivo,
+        categoria: categoria,
+        rutaArchivo: rutaArchivo,
+      );
+
+      await BaseDatos.insertarCanto(db!, canto);
+    }
+  } catch (e) {
+    print('Error al cargar los cantos: $e');
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, required this.db}) : super(key: key);
+
+  final Database? db;
 
   @override
   Widget build(BuildContext context) {
@@ -28,159 +72,7 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Colors.deepPurple.shade900),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Cancionero RUAH'),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          title,
-          style:
-              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            //Primera columna de botones (izquierda)
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _buildCardButton(
-                      context, 'Alabanza', 'alabanza', 'images/entrada.jpeg'),
-                  _buildCardButton(
-                      context, 'Aleluya', 'aleluya', 'images/aleluya.jpeg'),
-                  _buildCardButton(context, 'Canto a la Virgen', 'virgen',
-                      'images/maria.jpeg'),
-                  _buildCardButton(context, 'Canto al Espíritu Santo', 'santo',
-                      'images/santo.jpeg'),
-                  _buildCardButton(context, 'Canto de Adoración', 'adoracion',
-                      'images/paz.jpeg'),
-                  _buildCardButton(context, 'Canto de Adviento', 'adviento',
-                      'images/accionGracias.jpeg'),
-                  _buildCardButton(context, 'Canto de Agradecimiento',
-                      'agradecimiento', 'images/salida.jpeg'),
-                  _buildCardButton(context, 'Canto de Comunión', 'comunion',
-                      'images/comunion.jpeg'),
-                  _buildCardButton(context, 'Canto de Entrada', 'entrada',
-                      'images/entrada.jpeg'),
-                  _buildCardButton(context, 'Canto de Pascua', 'pascua',
-                      'images/ofertorio.jpeg'),
-                  _buildCardButton(context, 'Canto de Reflexión', 'reflexion',
-                      'images/salmo.jpeg'),
-                  _buildCardButton(context, 'Canto de Salida', 'salida',
-                      'images/padrenuestro.jpeg'),
-                ],
-              ),
-            ),
-            //Segunda columna de botones (derecha)
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _buildCardButton(context, 'Canto Ofertorio', 'ofertorio',
-                      'images/ofertorio.jpeg'),
-                  _buildCardButton(context, 'Canto para Boda', 'boda',
-                      'images/procesion.jpeg'),
-                  _buildCardButton(context, 'Canto para Difunto', 'difuntos',
-                      'images/aleluya.jpeg'),
-                  _buildCardButton(context, 'Canto para el Bautismo',
-                      'bautismo', 'images/maria.jpeg'),
-                  _buildCardButton(context, 'Canto para Primera Comunión',
-                      'comunion', 'images/comunion.jpeg'),
-                  _buildCardButton(context, 'Canto para XV años', 'xvanios',
-                      'images/paz.jpeg'),
-                  _buildCardButton(
-                      context, 'Cantos', 'cantos', 'images/accionGracias.jpeg'),
-                  _buildCardButton(context, 'Cantos para Navidad', 'navidad',
-                      'images/salida.jpeg'),
-                  _buildCardButton(context, 'Cordero de Dios', 'cordero',
-                      'images/comunion.jpeg'),
-                  _buildCardButton(context, 'Cuaresma y Semana Santa',
-                      'cuaresma', 'images/entrada.jpeg'),
-                  _buildCardButton(
-                      context, 'Santo', 'santo', 'images/santo.jpeg'),
-                  _buildCardButton(
-                      context, 'Villancico', 'villancico', 'images/salmo.jpeg')
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCardButton(
-      BuildContext context, String buttonText, String route, String imagePath) {
-    return Card(
-      elevation: 5.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      margin: const EdgeInsets.all(10.0),
-      child: InkWell(
-        onTap: () {
-          _navegarListaC(context, route);
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Container(
-              height: 100.0,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                buttonText,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Container(
-              color: Colors.grey[300],
-              padding: const EdgeInsets.all(8.0),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Ver',
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                  Icon(Icons.arrow_forward),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _navegarListaC(BuildContext context, String genero) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => PagListaCan(genero: genero)),
+      home: MyHomePage(title: 'Cancionero RUAH', db: db),
     );
   }
 }
