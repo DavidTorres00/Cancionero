@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "490595837150",
+    "project_id": "ruah-446d7",
+    "storage_bucket": "ruah-446d7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490595837150:android:2b1fdb5f85328b7810ce4f",
+        "android_client_info": {
+          "package_name": "com.example.ruah"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk6WSPCKBDYNhwwjbX7IDJSrXkyFuJ-D8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
