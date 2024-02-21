@@ -13,8 +13,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
+import '../firebase_operaciones.dart';
 import '../modelos/modelos.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:http/http.dart' as http;
 
 class PagListaCan extends StatefulWidget {
   final String genero;
@@ -38,21 +40,36 @@ class _PagListaCanState extends State<PagListaCan> {
   }
 
   Future<void> _getCantosPorGenero() async {
-    final List<Canto> cantos =
-        await BaseDatos.listarCantos(widget.db!, categoria: widget.genero);
+    final List<Map<String, dynamic>> cantos =
+        await FirebaseOperations.consultarCantosPorCategoria(widget.genero);
+    final List<Canto> cantoModels = cantos
+        .map((canto) => Canto(
+              nombre: canto['nombre'] ?? '',
+              categoria: canto['categoria'] ?? '',
+              rutaArchivo: canto['rutaArchivo'] ?? '',
+              urlArchivo: canto['urlArchivo'],
+            ))
+        .toList();
     setState(() {
-      _cantos = cantos;
+      _cantos = cantoModels;
       _isLoading = false;
     });
   }
 
-  Future<Uint8List?> leerContenidoCanto(String rutaArchivo) async {
+  Future<Uint8List?> leerContenidoCanto(String? urlArchivo) async {
     try {
-      //Cargar el contenido del archivo desde los activos de la aplicación
-      ByteData data = await rootBundle.load(rutaArchivo);
-      return data.buffer.asUint8List();
+      if (urlArchivo != null) {
+        //Solicitud HTTP para obtener el contenido del archivo
+        final http.Response response = await http.get(Uri.parse(urlArchivo));
+
+        if (response.statusCode == 200) {
+          //Devuelve los bytes del archivo como Uint8List
+          return response.bodyBytes;
+        }
+      }
+      return null;
     } catch (e) {
-      //Mostrar un SnackBar con el mensaje de error
+      print('Error al cargar el contenido del archivo: $e');
       return null;
     }
   }
@@ -68,33 +85,35 @@ class _PagListaCanState extends State<PagListaCan> {
             ? const CircularProgressIndicator()
             : _cantos.isEmpty
                 ? const Text('No hay cantos en esta categoría')
-                : Column(
-                    children: [
-                      for (var canto in _cantos)
-                        ListTile(
-                          title: Text(canto.nombre),
-                          subtitle: Text(canto.categoria),
-                          onTap: () async {
-                            final contenido =
-                                await leerContenidoCanto(canto.rutaArchivo);
-                            if (contenido != null) {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SfPdfViewer.memory(contenido),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Error al abrir el archivo'),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                    ],
+                : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        for (var canto in _cantos)
+                          ListTile(
+                            title: Text(canto.nombre),
+                            subtitle: Text(canto.categoria),
+                            onTap: () async {
+                              final contenido =
+                                  await leerContenidoCanto(canto.urlArchivo);
+                              if (contenido != null) {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SfPdfViewer.memory(contenido),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Error al abrir el archivo'),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                      ],
+                    ),
                   ),
       ),
     );

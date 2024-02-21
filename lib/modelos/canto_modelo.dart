@@ -13,12 +13,15 @@ class Canto {
   final String nombre;
   final String categoria;
   final String rutaArchivo;
+  final String? urlArchivo;
 
-  Canto(
-      {this.id,
-      required this.nombre,
-      required this.categoria,
-      required this.rutaArchivo});
+  Canto({
+    this.id,
+    required this.nombre,
+    required this.categoria,
+    required this.rutaArchivo,
+    this.urlArchivo,
+  });
 
   //Método para convertir un objeto Canto en un mapa
   Map<String, dynamic> toMap() {
@@ -27,6 +30,7 @@ class Canto {
       'nombre': nombre,
       'categoria': categoria,
       'rutaArchivo': rutaArchivo,
+      'urlArchivo': urlArchivo
     };
   }
 }
