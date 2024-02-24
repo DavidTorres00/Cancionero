@@ -9,9 +9,9 @@
 //**************************************************
 
 class Canto {
-  final int? id;
-  final String nombre;
-  final String categoria;
+  final String? id;
+  late String nombre;
+  late String categoria;
   final String rutaArchivo;
   final String? urlArchivo;
 

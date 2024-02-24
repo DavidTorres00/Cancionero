@@ -38,10 +38,10 @@ class FirebaseOperations {
         'nombre': nombre,
         'categoria': categoria,
         'rutaArchivo': rutaArchivo,
-        'urlArchivo': downloadURL, // URL de descarga del archivo
+        'urlArchivo': downloadURL, //URL de descarga del archivo
       });
     } catch (e) {
-      print('Error al agregar canto: $e');
+      //print('Error al agregar canto: $e');
     }
   }
 
@@ -50,9 +50,13 @@ class FirebaseOperations {
     try {
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await _firestore.collection('cantos').get();
-      return querySnapshot.docs.map((doc) => doc.data()).toList();
+      return querySnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data();
+        data['Document ID'] = doc.id; //Agrega el Document ID al mapa de datos
+        return data;
+      }).toList();
     } catch (e) {
-      print('Error al consultar todos los cantos: $e');
+      //print('Error al consultar todos los cantos: $e');
       return [];
     }
   }
@@ -65,15 +69,21 @@ class FirebaseOperations {
           .collection('cantos')
           .where('categoria', isEqualTo: categoria)
           .get();
-      return querySnapshot.docs.map((doc) => doc.data()).toList();
+
+      //Mapea cada documento a un mapa de datos que incluye el Document ID
+      return querySnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data();
+        data['Document ID'] = doc.id; //Agrega el Document ID al mapa de datos
+        return data;
+      }).toList();
     } catch (e) {
-      print('Error al consultar cantos por categoria: $e');
+      //print('Error al consultar cantos por categoria: $e');
       return [];
     }
   }
 
   //Editar un canto
-  static Future<void> editarCanto(String id,
+  static Future<void> editarCanto(String? id,
       {String? nombre, String? categoria}) async {
     try {
       final DocumentReference<Map<String, dynamic>> docRef =
@@ -83,7 +93,18 @@ class FirebaseOperations {
       if (categoria != null) dataToUpdate['categoria'] = categoria;
       await docRef.update(dataToUpdate);
     } catch (e) {
-      print('Error al editar canto: $e');
+      //print('Error al editar canto: $e');
+    }
+  }
+
+  //Eliminar
+  static Future<void> eliminarCanto(String? id) async {
+    try {
+      final DocumentReference<Map<String, dynamic>> docRef =
+          _firestore.collection('cantos').doc(id);
+      await docRef.delete();
+    } catch (e) {
+      //print('Error al eliminar canto: $e');
     }
   }
 }
