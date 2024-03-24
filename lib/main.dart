@@ -28,7 +28,7 @@ void main() async {
   //Abrir la base de datos
   final db = await BaseDatos.initDatabase();
 
-  print('Base de datos inicializada correctamente');
+  //print('Base de datos inicializada correctamente');
 
   runApp(MyApp(db: db));
 }
@@ -42,13 +42,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'RUAH CANCIONERO',
+      title: 'RUAH',
       theme: ThemeData(
         colorScheme:
             ColorScheme.fromSeed(seedColor: Colors.deepPurple.shade900),
         useMaterial3: true,
       ),
-      home: MyHomePage(title: 'Cancionero RUAH', db: db),
+      home: PaginaPrincipal(titulo: 'Cancionero RUAH', db: db),
     );
   }
 }
