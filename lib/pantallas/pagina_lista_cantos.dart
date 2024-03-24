@@ -69,48 +69,79 @@ class _PagListaCanState extends State<PagListaCan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text('Cantos de ${widget.genero}'),
       ),
-      body: FutureBuilder<List<Canto>>(
-        future: _cantosFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error al cargar los cantos'));
-          } else if (snapshot.data!.isEmpty) {
-            return Center(child: Text('No hay cantos en esta categoría'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final canto = snapshot.data![index];
-                return ListTile(
-                  title: Text(canto.nombre),
-                  // subtitle: Text(canto.categoria),
-                  onTap: () async {
-                    final contenido =
-                        await leerContenidoCanto(canto.urlArchivo);
-                    if (contenido != null) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => SfPdfViewer.memory(contenido),
+      body: Stack(
+        children: [
+          //Imagen en el 30% superior
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height *
+                  0.3, //30% de la altura de la pantalla
+              child: Image.asset(
+                'imagenes/home_page3.webp',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          //Contenido dinámico debajo de la imagen
+          Positioned(
+            top: MediaQuery.of(context).size.height *
+                0.3, //Posiciona el contenido debajo de la imagen
+            left: 0,
+            right: 0,
+            bottom: 0, //Ocupa todo el espacio restante
+            child: FutureBuilder<List<Canto>>(
+              future: _cantosFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error al cargar los cantos'));
+                } else if (snapshot.data!.isEmpty) {
+                  return Center(child: Text('No hay cantos en esta categoría'));
+                } else {
+                  return ListView.builder(
+                    padding: EdgeInsets
+                        .zero, //Elimina el espacio de padding predeterminado
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      final canto = snapshot.data![index];
+                      return ListTile(
+                        title: Text(canto.nombre),
+                        onTap: () async {
+                          final contenido =
+                              await leerContenidoCanto(canto.urlArchivo);
+                          if (contenido != null) {
+                            showDialog(
+                              context: context,
+                              builder: (_) => SfPdfViewer.memory(contenido),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error al abrir el archivo'),
+                              ),
+                            );
+                          }
+                        },
+                        onLongPress: () =>
+                            _mostrarMenuEmergente(context, canto),
                       );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Error al abrir el archivo'),
-                        ),
-                      );
-                    }
-                  },
-                  onLongPress: () => _mostrarMenuEmergente(context, canto),
-                );
+                    },
+                  );
+                }
               },
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

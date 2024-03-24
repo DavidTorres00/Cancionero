@@ -1,5 +1,5 @@
-name: ruah
-description: A new Flutter project.
+name: cancionero
+description: Este proyecto pone en práctica la integración de Firebase. Permite la visualización de cantos por categoría, búsqueda por nombre de canto y operaciones CRUD básicas utilizando Firebase Realtime Database y Firebase Storage.
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -17,6 +17,7 @@ dependencies:
   cloud_firestore: ^4.15.4
   firebase_storage: ^11.6.6
   http: ^1.2.0
+  remove_diacritic: ^0.9.0
   
 dev_dependencies:
   flutter_test:
@@ -26,25 +27,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - images/
-    - cantosDoc/
-    - cantosDoc/Adoracion/
-    - cantosDoc/Adviento/
-    - cantosDoc/Agradecimiento/
-    - cantosDoc/Alabanza/
-    - cantosDoc/Aleluya/
-    - cantosDoc/Bautismo/
-    - cantosDoc/Boda/
-    - cantosDoc/Comunion/
-    - cantosDoc/Cordero/
-    - cantosDoc/Curesma/
-    - cantosDoc/Difunto/
-    - cantosDoc/Entrada/
-    - cantosDoc/Espiritu/
-    - cantosDoc/Navidad/
-    - cantosDoc/Ofertorio/
-    - cantosDoc/Pascua/
-    - cantosDoc/Reflexion/
-    - cantosDoc/Salida/
-    - cantosDoc/Santo/
-    - cantosDoc/Villancico/
+    - imagenes/

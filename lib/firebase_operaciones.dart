@@ -11,6 +11,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:remove_diacritic/remove_diacritic.dart';
 
 class FirebaseOperations {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -59,6 +60,55 @@ class FirebaseOperations {
       //print('Error al consultar todos los cantos: $e');
       return [];
     }
+  }
+
+  static Future<List<Map<String, dynamic>>> consultarCantosPorNombre(
+      String nombre) async {
+    try {
+      //Convierte el nombre a minúsculas y elimina los espacios iniciales o finales
+      nombre = nombre.trim().toLowerCase();
+
+      final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await _firestore.collection('cantos').get();
+
+      //Filtra los documentos en memoria para encontrar aquellos que coincidan con el nombre modificado
+      List<Map<String, dynamic>> resultados = querySnapshot.docs
+          .map((doc) => doc.data())
+          .where((data) => _compararNombres(data['nombre'], nombre))
+          .toList();
+
+      //Mapea cada documento a un mapa de datos que incluye el ID del documento
+      return resultados.map((data) {
+        QueryDocumentSnapshot<Map<String, dynamic>>? docRef;
+        for (var doc in querySnapshot.docs) {
+          if (_compararNombres(doc.data()['nombre'], nombre)) {
+            docRef = doc;
+            break;
+          }
+        }
+        if (docRef != null) {
+          data['ID del Documento'] =
+              docRef.id; //Agrega el ID del documento al mapa de datos
+        }
+        return data;
+      }).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  //Función para comparar dos nombres teniendo en cuenta los acentos y los espacios entre palabras
+  static bool _compararNombres(String nombre1, String nombre2) {
+    //Normaliza las cadenas de caracteres para ignorar las diferencias de acentos
+    final nombreNormalizado1 = _normalizarCadena(nombre1);
+    final nombreNormalizado2 = _normalizarCadena(nombre2);
+    //Compara las cadenas normalizadas
+    return nombreNormalizado1 == nombreNormalizado2;
+  }
+
+  //Normalizar una cadena de caracteres y eliminar las diferencias de acentos
+  static String _normalizarCadena(String input) {
+    return removeDiacritics(input.trim().toLowerCase());
   }
 
   //Consultar cantos por categoría
