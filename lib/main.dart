@@ -34,7 +34,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key, required this.db}) : super(key: key);
+  const MyApp({super.key, required this.db});
 
   final Database? db;
 

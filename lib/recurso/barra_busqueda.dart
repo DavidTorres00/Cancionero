@@ -18,11 +18,11 @@ class BarraBusqueda extends StatelessWidget {
   final Function(String) onSearch; //Función de búsqueda
 
   const BarraBusqueda({
-    Key? key,
+    super.key,
     required this.controladorTexto,
     required this.nodoEnfoqueCampoTexto,
     required this.onSearch, //Agrega la función de búsqueda
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

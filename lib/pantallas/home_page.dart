@@ -21,10 +21,10 @@ import 'package:http/http.dart' as http;
 
 class PaginaPrincipal extends StatelessWidget {
   PaginaPrincipal({
-    Key? key,
+    super.key,
     required this.titulo,
     required this.db,
-  }) : super(key: key);
+  });
 
   final String titulo;
   final Database? db;

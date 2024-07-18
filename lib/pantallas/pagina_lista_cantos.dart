@@ -22,8 +22,7 @@ class PagListaCan extends StatefulWidget {
   final String genero;
   final Database? db;
 
-  const PagListaCan({Key? key, required this.genero, required this.db})
-      : super(key: key);
+  const PagListaCan({super.key, required this.genero, required this.db});
 
   @override
   _PagListaCanState createState() => _PagListaCanState();
