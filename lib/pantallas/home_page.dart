@@ -13,10 +13,10 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:ruah/pantallas/pantallas.dart';
+import 'package:cancionero/pantallas/pantallas.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../firebase_operaciones.dart';
-import 'package:ruah/recurso/barra_busqueda.dart' as BarraBusqueda;
+import 'package:cancionero/recurso/barra_busqueda.dart' as BarraBusqueda;
 import 'package:http/http.dart' as http;
 
 class PaginaPrincipal extends StatelessWidget {

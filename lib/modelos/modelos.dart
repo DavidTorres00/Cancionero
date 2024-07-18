@@ -9,7 +9,7 @@
 //**************************************************
 
 //base_datos
-export 'package:ruah/modelos/base_datos.dart';
+export 'package:cancionero/modelos/base_datos.dart';
 
 //Canto
-export 'package:ruah/modelos/canto_modelo.dart';
+export 'package:cancionero/modelos/canto_modelo.dart';

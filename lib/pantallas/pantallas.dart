@@ -9,7 +9,7 @@
 //**************************************************
 
 //Home
-export 'package:ruah/pantallas/home_page.dart';
+export 'package:cancionero/pantallas/home_page.dart';
 
 //Listado
-export 'package:ruah/pantallas/pagina_lista_cantos.dart';
+export 'package:cancionero/pantallas/pagina_lista_cantos.dart';
